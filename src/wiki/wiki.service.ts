@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios/dist';
-import { Injectable } from '@nestjs/common';
-import { Observable, map, firstValueFrom} from 'rxjs'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Observable, map, firstValueFrom, catchError} from 'rxjs'
 import { MonthlyData } from './interfaces/monthly-data.interface';
 
 @Injectable()
@@ -20,7 +20,10 @@ export class WikiService {
         let monthly : MonthlyData[] = []
 
         const value = await firstValueFrom(this._httpService.get<any>('https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/fr.wikipedia/all-access/all-agents/' + page +'/monthly/' + year + '010100/' + year + '123100'
-        ))
+        ).pipe(catchError(() => {
+            throw new NotFoundException('Ressource introuvable')
+        }))
+        )
         for(let item of value.data.items){
 
             let month : string

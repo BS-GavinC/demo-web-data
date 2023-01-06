@@ -12,7 +12,6 @@ export class WikiController {
 
     @Get(':year/:page')
     async GetMonthly2(@Param() params){
-        
         return await this._wikiService.GetMonthly2(params.year, params.page)
     }
 
